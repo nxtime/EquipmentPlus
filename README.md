@@ -11,7 +11,7 @@ Armor durability HUD and auto-repair functionality for Hytale servers.
 - Configurable position (left or right side)
 - Integrates with MultipleHUD if installed
 
-### Auto-Repair
+### Auto-Repair (WIP)
 
 - Automatically repairs items when they break
 - Uses Hytale's repair kit item
@@ -34,7 +34,7 @@ Settings are stored in `plugins/EquipmentPlus/config.json`:
 {
   "hudEnabled": true,
   "hudPosition": "left",
-  "autoRepairEnabled": true,
+  ~~"autoRepairEnabled": true,~~
   "hudUpdateTicks": 20
 }
 ```
@@ -43,7 +43,7 @@ Settings are stored in `plugins/EquipmentPlus/config.json`:
 |---------|---------|-------------|
 | `hudEnabled` | `true` | Enable/disable durability HUD |
 | `hudPosition` | `"left"` | HUD position: "left" or "right" |
-| `autoRepairEnabled` | `true` | Enable/disable auto-repair |
+~~| `autoRepairEnabled` | `true` | Enable/disable auto-repair |~~
 | `hudUpdateTicks` | `20` | HUD refresh rate (ticks) |
 
 ## Dependencies
