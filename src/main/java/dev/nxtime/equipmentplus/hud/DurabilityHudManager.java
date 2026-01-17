@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Integrates with MultipleHUD if available, otherwise uses native HUD system.
  */
 public class DurabilityHudManager {
-    private static final String HUD_FILE = "Pages/DurabilityHud.ui";
+    private static final String HUD_FILE = "Hud/DurabilityHud.ui";
 
     private final EquipmentPlusPlugin plugin;
     private final Map<UUID, DurabilityHud> playerHuds = new ConcurrentHashMap<>();
@@ -50,8 +50,10 @@ public class DurabilityHudManager {
 
             // Initialize method references during detection
             getInstanceMethod = this.multiHudClass.getMethod("getInstance");
-            setCustomHudMethod = this.multiHudClass.getMethod("setCustomHud", Player.class, PlayerRef.class, String.class, CustomUIHud.class);
-            hideCustomHudMethod = this.multiHudClass.getMethod("hideCustomHud", Player.class, PlayerRef.class, String.class);
+            setCustomHudMethod = this.multiHudClass.getMethod("setCustomHud", Player.class, PlayerRef.class,
+                    String.class, CustomUIHud.class);
+            hideCustomHudMethod = this.multiHudClass.getMethod("hideCustomHud", Player.class, PlayerRef.class,
+                    String.class);
 
             multipleHudAvailable = true;
             plugin.getPluginLogger().info("MultipleHUD detected - using integrated HUD system");
@@ -100,10 +102,12 @@ public class DurabilityHudManager {
         UUID uuid = player.getUuid();
         DurabilityHud hud = playerHuds.remove(uuid);
         if (hud != null) {
+            hud.hide(); // stop updates
             if (multipleHudAvailable) {
                 unregisterFromMultipleHud(player);
+            } else {
+                unregisterNativeHud(player);
             }
-            hud.hide();
         }
     }
 
@@ -141,7 +145,12 @@ public class DurabilityHudManager {
      */
     public void cleanup() {
         for (DurabilityHud hud : playerHuds.values()) {
-            hud.hide();
+            hud.hide(); // stop updates immediately
+            if (multipleHudAvailable) {
+                unregisterFromMultipleHud(hud.getPlayer());
+            } else {
+                unregisterNativeHud(hud.getPlayer());
+            }
         }
         playerHuds.clear();
     }
@@ -172,7 +181,6 @@ public class DurabilityHudManager {
 
     /**
      * Register HUD with MultipleHUD mod.
-     * Uses the same approach as Blocchio to ensure proper null checking.
      */
     private void registerWithMultipleHud(Player player, DurabilityHud hud) {
         try {
@@ -185,7 +193,7 @@ public class DurabilityHudManager {
             // Get the MultipleHUD instance
             Object instance = getInstanceMethod.invoke(null);
 
-            // Critical: Check if instance is null before using it (Blocchio pattern)
+            // Critical: Check if instance is null before using it
             if (instance == null) {
                 plugin.getPluginLogger().warn("MultipleHUD getInstance() returned null");
                 return;
@@ -193,7 +201,8 @@ public class DurabilityHudManager {
 
             // Register the custom HUD
             setCustomHudMethod.invoke(instance, player, player.getPlayerRef(), HUD_FILE, hud.getCustomHud());
-            plugin.getPluginLogger().debug("Successfully registered HUD with MultipleHUD for player: " + player.getUuid());
+            plugin.getPluginLogger()
+                    .debug("Successfully registered HUD with MultipleHUD for player: " + player.getUuid());
         } catch (Exception e) {
             plugin.getPluginLogger().warn("Failed to register with MultipleHUD: " + e.getMessage());
             e.printStackTrace();
@@ -202,7 +211,6 @@ public class DurabilityHudManager {
 
     /**
      * Unregister HUD from MultipleHUD mod.
-     * Uses the same approach as Blocchio to ensure proper null checking.
      */
     private void unregisterFromMultipleHud(Player player) {
         try {
@@ -215,7 +223,7 @@ public class DurabilityHudManager {
             // Get the MultipleHUD instance
             Object instance = getInstanceMethod.invoke(null);
 
-            // Critical: Check if instance is null before using it (Blocchio pattern)
+            // Critical: Check if instance is null before using it
             if (instance == null) {
                 plugin.getPluginLogger().warn("MultipleHUD getInstance() returned null during hide");
                 return;
@@ -223,9 +231,24 @@ public class DurabilityHudManager {
 
             // Unregister the custom HUD
             hideCustomHudMethod.invoke(instance, player, player.getPlayerRef(), HUD_FILE);
-            plugin.getPluginLogger().debug("Successfully unregistered HUD from MultipleHUD for player: " + player.getUuid());
+            plugin.getPluginLogger()
+                    .debug("Successfully unregistered HUD from MultipleHUD for player: " + player.getUuid());
         } catch (Exception e) {
             plugin.getPluginLogger().warn("Failed to unregister from MultipleHUD: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Unregisters HUD from the native Hytale HUD system.
+     */
+    private void unregisterNativeHud(Player player) {
+        try {
+            if (player != null && player.getHudManager() != null) {
+                player.getHudManager().setCustomHud(player.getPlayerRef(), null);
+                plugin.getPluginLogger().debug("Successfully unregistered native HUD for player: " + player.getUuid());
+            }
+        } catch (Exception e) {
+            plugin.getPluginLogger().warn("Failed to unregister native HUD: " + e.getMessage());
         }
     }
 

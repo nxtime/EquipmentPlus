@@ -12,6 +12,9 @@ import com.hypixel.hytale.server.core.Message;
 import dev.nxtime.equipmentplus.EquipmentPlusPlugin;
 import dev.nxtime.equipmentplus.EquipmentPlusConfig;
 import dev.nxtime.equipmentplus.util.CommandUtils;
+import dev.nxtime.equipmentplus.util.ColorConfig;
+import dev.nxtime.equipmentplus.gui.EquipmentPlusGuiPage;
+import com.hypixel.hytale.server.core.entity.entities.Player;
 
 import javax.annotation.Nonnull;
 
@@ -35,10 +38,14 @@ public class EquipmentPlusCommand extends AbstractPlayerCommand {
     protected void execute(@Nonnull CommandContext ctx, @Nonnull Store<EntityStore> store,
             @Nonnull Ref<EntityStore> ref, @Nonnull PlayerRef playerRef, @Nonnull World world) {
 
+        Player player = store.getComponent(ref, Player.getComponentType());
+        if (player == null)
+            return;
+
         String[] args = CommandUtils.parseArgs(ctx, "equipmentplus");
 
-        if (args.length == 0) {
-            sendHelp(ctx);
+        if (args.length == 0 || "gui".equalsIgnoreCase(args[0])) {
+            openGui(player);
             return;
         }
 
@@ -48,43 +55,78 @@ public class EquipmentPlusCommand extends AbstractPlayerCommand {
         switch (subCommand) {
             case "reload":
                 config.load();
-                plugin.getHudManager().updateAllHuds(); // Apply changes
-                ctx.sender().sendMessage(Message.raw("Configuration reloaded!").color("#00FF00"));
+                plugin.getHudManager().cleanup();
+                world.getPlayers().forEach(p -> plugin.getHudManager().showHud(p));
+                player.sendMessage(Message.join(
+                        Message.raw(ColorConfig.BRAND).color(ColorConfig.PREFIX_COLOR),
+                        Message.raw("Configuration reloaded!").color(ColorConfig.SUCCESS)));
                 break;
 
             case "togglehud":
                 boolean newState = !config.isHudEnabled();
                 config.setHudEnabled(newState);
                 if (newState) {
-                    plugin.getHudManager().updateAllHuds(); // Show/Update
-                    // We re-initialize for online players in current world
                     world.getPlayers().forEach(p -> plugin.getHudManager().showHud(p));
                 } else {
                     plugin.getHudManager().cleanup();
                 }
-                ctx.sender().sendMessage(Message.raw("HUD enabled: " + newState).color("#00FF00"));
+                player.sendMessage(Message.join(
+                        Message.raw(ColorConfig.BRAND).color(ColorConfig.PREFIX_COLOR),
+                        Message.raw("HUD enabled: ").color(ColorConfig.TEXT),
+                        Message.raw(String.valueOf(newState))
+                                .color(newState ? ColorConfig.SUCCESS : ColorConfig.ERROR)));
                 break;
 
             case "position":
                 String current = config.getHudPosition();
-                String newPos = current.equals("left") ? "right" : "left";
+                String newPos = current.equalsIgnoreCase("left") ? "right" : "left";
                 config.setHudPosition(newPos);
-                // Re-create HUDs to apply new anchor
                 plugin.getHudManager().cleanup();
                 world.getPlayers().forEach(p -> plugin.getHudManager().showHud(p));
-                ctx.sender().sendMessage(Message.raw("HUD position set to: " + newPos).color("#00FF00"));
+                player.sendMessage(Message.join(
+                        Message.raw(ColorConfig.BRAND).color(ColorConfig.PREFIX_COLOR),
+                        Message.raw("HUD position set to: ").color(ColorConfig.TEXT),
+                        Message.raw(newPos).color(ColorConfig.HIGHLIGHT)));
                 break;
 
             default:
-                sendHelp(ctx);
+                sendHelp(player);
                 break;
         }
     }
 
-    private void sendHelp(CommandContext ctx) {
-        ctx.sender().sendMessage(Message.raw("§6EquipmentPlus Commands:"));
-        ctx.sender().sendMessage(Message.raw("§7/equipmentplus reload §f- Reload config"));
-        ctx.sender().sendMessage(Message.raw("§7/equipmentplus togglehud §f- Toggle HUD on/off"));
-        ctx.sender().sendMessage(Message.raw("§7/equipmentplus position §f- Toggle Left/Right position"));
+    private void openGui(Player player) {
+        var ref = player.getReference();
+        if (ref != null && ref.isValid()) {
+            var store = ref.getStore();
+            var world = store.getExternalData().getWorld();
+
+            world.execute(() -> {
+                var playerRefComponent = store.getComponent(ref, PlayerRef.getComponentType());
+                if (playerRefComponent != null) {
+                    player.getPageManager().openCustomPage(ref, store,
+                            new EquipmentPlusGuiPage(playerRefComponent,
+                                    com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime.CanDismiss));
+                }
+            });
+        }
+    }
+
+    private void sendHelp(Player player) {
+        player.sendMessage(Message.join(
+                Message.raw(ColorConfig.BRAND).color(ColorConfig.PREFIX_COLOR),
+                Message.raw("Available Commands:").color(ColorConfig.HIGHLIGHT)));
+        player.sendMessage(Message.join(
+                Message.raw("  /equipmentplus ").color(ColorConfig.TEXT),
+                Message.raw("- Open settings GUI").color(ColorConfig.HIGHLIGHT)));
+        player.sendMessage(Message.join(
+                Message.raw("  /equipmentplus reload ").color(ColorConfig.TEXT),
+                Message.raw("- Reload configuration").color(ColorConfig.HIGHLIGHT)));
+        player.sendMessage(Message.join(
+                Message.raw("  /equipmentplus togglehud ").color(ColorConfig.TEXT),
+                Message.raw("- Toggle HUD visibility").color(ColorConfig.HIGHLIGHT)));
+        player.sendMessage(Message.join(
+                Message.raw("  /equipmentplus position ").color(ColorConfig.TEXT),
+                Message.raw("- Switch Left/Right position").color(ColorConfig.HIGHLIGHT)));
     }
 }

@@ -11,7 +11,7 @@
     FontSize: 12
 );
 
-Group #DurabilityWrapper {
+Group #EquipmentPlusWrapper {
     Anchor: (Left: 10, Width: 120);
     LayoutMode: Middle;
 
@@ -119,6 +119,26 @@ Group #DurabilityWrapper {
                     Value: 1.0;
                     Background: @ProgressBarBackground;
                     Bar: @ProgressBarGreen;
+                }
+            }
+        }
+    }
+    Group #AmmoRemainingPanel {
+        Group #AmmoSlotGroup {
+            Anchor: (Height: 70);
+            LayoutMode: Center;
+            Visible: false;
+
+            ItemIcon #AmmoItemIcon {
+                Anchor: (Width: 48, Height: 48);
+            }
+
+            Group #AmmoRemainingInfo {
+                Anchor: (Width: 30);
+                LayoutMode: Center;
+
+                Label #AmmoRemainigText {
+                    Style: @LabelStyle;
                 }
             }
         }

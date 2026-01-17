@@ -1,0 +1,59 @@
+// EquipmentPlus Menu styled like Hytale Settings
+// Similar structure to HideArmor for consistency
+
+$C = "../Common.ui";
+$Container = "../Container.ui";
+
+// Define the settings row macro
+@SettingsRow = Group {
+  Anchor: (Height: 40, Bottom: 6);
+  Background: #1a2533;
+  LayoutMode: Left;
+
+  Label #Name {
+    Anchor: (Left: 16);
+    Style: (VerticalAlignment: Center, TextColor: #96a9be, RenderUppercase: false, FontSize: 16);
+  }
+
+  Group {
+    FlexWeight: 1;
+  }
+
+  $C.@CheckBox #CheckBox {
+    Anchor: (Width: 22, Height: 22, Right: 14);
+  }
+};
+
+// Section header macro
+@SectionHeader = Label {
+  Anchor: (Bottom: 12);
+  Style: (FontSize: 16, TextColor: #96a9be, RenderUppercase: true, RenderBold: true);
+};
+
+$C.@PageOverlay {
+  $C.@Container {
+    Anchor: (Width: 480, Height: 320);
+
+    #Title {
+      Group {
+        $C.@Title {
+          @Text = "EquipmentPlus Settings";
+        }
+      }
+    }
+
+    #Content {
+      LayoutMode: Top;
+      Padding: (Top: 20, Bottom: 20, Left: 20, Right: 20);
+
+      @SectionHeader { Text: "HUD SETTINGS"; }
+
+      @SettingsRow #HudEnabledSetting { #Name { Text: "Enable Equipments HUD"; } }
+      
+      @SettingsRow #HudPositionSetting { #Name { Text: "Position (On = Right, Off = Left)"; } }
+      
+    }
+  }
+}
+
+$C.@BackButton {}

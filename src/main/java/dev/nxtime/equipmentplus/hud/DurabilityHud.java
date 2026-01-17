@@ -32,7 +32,6 @@ public class DurabilityHud extends CustomUIHud {
     private final Player player;
     private boolean visible = false;
 
-    // Visibility state for each slot (following Blocchio pattern)
     private volatile boolean headVisible = false;
     private volatile boolean chestVisible = false;
     private volatile boolean handsVisible = false;
@@ -59,6 +58,11 @@ public class DurabilityHud extends CustomUIHud {
     private volatile double legsDurabilityValue = 1.0;
     private volatile String legsBarColor = "#00FF00";
 
+    // Ammo slot
+    private volatile boolean ammoVisible = false;
+    private volatile String ammoItemId = "";
+    private volatile String ammoRemainingText = "0";
+
     public DurabilityHud(EquipmentPlusPlugin plugin, Player player) {
         super(player.getPlayerRef());
         this.plugin = plugin;
@@ -71,6 +75,8 @@ public class DurabilityHud extends CustomUIHud {
             updateSlotState(armor.getItemStack((short) SLOT_CHEST), 1);
             updateSlotState(armor.getItemStack((short) SLOT_HANDS), 2);
             updateSlotState(armor.getItemStack((short) SLOT_LEGS), 3);
+            // Initialize ammo state
+            updateAmmoState();
         } catch (Exception e) {
             // If initialization fails, use default values
             plugin.getPluginLogger().debug("Failed to initialize HUD state: " + e.getMessage());
@@ -79,7 +85,6 @@ public class DurabilityHud extends CustomUIHud {
 
     /**
      * Updates the HUD with current armor durability values.
-     * Following Blocchio pattern: update fields, build UI commands, then send update.
      */
     public void update() {
         if (!visible) {
@@ -96,6 +101,9 @@ public class DurabilityHud extends CustomUIHud {
             updateSlotState(armor.getItemStack((short) SLOT_HANDS), 2);
             // Update legs slot state
             updateSlotState(armor.getItemStack((short) SLOT_LEGS), 3);
+
+            // Update ammo state
+            updateAmmoState();
 
             // Build UI commands with updated state
             UICommandBuilder builder = new UICommandBuilder();
@@ -155,6 +163,13 @@ public class DurabilityHud extends CustomUIHud {
             legsBarStyle.setColor(Value.of(legsBarColor));
             builder.setObject("#LegsDurabilityBar.Bar", legsBarStyle);
         }
+
+        // Ammo slot
+        builder.set("#AmmoSlotGroup.Visible", ammoVisible);
+        if (ammoVisible) {
+            builder.set("#AmmoItemIcon.ItemId", ammoItemId);
+            builder.set("#AmmoRemainigText.Text", ammoRemainingText);
+        }
     }
 
     /**
@@ -205,11 +220,59 @@ public class DurabilityHud extends CustomUIHud {
         } else {
             // Hide the slot
             switch (slotIndex) {
-                case 0: headVisible = false; break;
-                case 1: chestVisible = false; break;
-                case 2: handsVisible = false; break;
-                case 3: legsVisible = false; break;
+                case 0:
+                    headVisible = false;
+                    break;
+                case 1:
+                    chestVisible = false;
+                    break;
+                case 2:
+                    handsVisible = false;
+                    break;
+                case 3:
+                    legsVisible = false;
+                    break;
             }
+        }
+    }
+
+    /**
+     * Updates the ammo state by checking player's inventory for arrows.
+     */
+    private void updateAmmoState() {
+        try {
+            ItemContainer inventory = player.getInventory().getCombinedEverything();
+            int totalArrows = 0;
+            String arrowItemId = null;
+
+            // Search inventory for arrows
+            short capacity = inventory.getCapacity();
+            for (short i = 0; i < capacity; i++) {
+                ItemStack item = inventory.getItemStack(i);
+                if (item != null && !item.isEmpty()) {
+                    String itemId = item.getItemId();
+                    // Check if item is an arrow (you may need to adjust this check based on actual
+                    // arrow item IDs)
+                    if (itemId != null && (itemId.contains("arrow") || itemId.contains("Arrow"))) {
+                        totalArrows += item.getQuantity();
+                        if (arrowItemId == null) {
+                            arrowItemId = itemId;
+                        }
+                    }
+                }
+            }
+
+            // Update ammo state
+            if (totalArrows > 0 && arrowItemId != null) {
+                ammoVisible = true;
+                ammoItemId = arrowItemId;
+                ammoRemainingText = String.valueOf(totalArrows);
+            } else {
+                ammoVisible = false;
+            }
+        } catch (Exception e) {
+            plugin.getPluginLogger().debug("Failed to update ammo state: " + e.getMessage());
+            ammoVisible = false;
         }
     }
 
@@ -221,14 +284,14 @@ public class DurabilityHud extends CustomUIHud {
         // Set initial position based on config
         String position = plugin.getPluginConfig().getHudPosition();
         Anchor anchor = new Anchor();
-        anchor.setWidth(Value.of(80));
+        anchor.setWidth(Value.of(120));
 
         if ("right".equalsIgnoreCase(position)) {
             anchor.setRight(Value.of(10));
         } else {
             anchor.setLeft(Value.of(10));
         }
-        commandBuilder.setObject("#DurabilityWrapper.Anchor", anchor);
+        commandBuilder.setObject("#EquipmentPlusWrapper.Anchor", anchor);
 
         // Set all slot properties using current field values
         buildSlotCommands(commandBuilder);
@@ -253,16 +316,12 @@ public class DurabilityHud extends CustomUIHud {
 
     public void hide() {
         visible = false;
-        try {
-            player.getHudManager().setCustomHud(player.getPlayerRef(), null);
-        } catch (Exception e) {
-            // Ignore
-        }
     }
 
     /**
      * Returns this instance as a CustomUIHud.
-     * Since DurabilityHud extends CustomUIHud, we return 'this' instead of a separate field.
+     * Since DurabilityHud extends CustomUIHud, we return 'this' instead of a
+     * separate field.
      */
     public CustomUIHud getCustomHud() {
         return this;
@@ -270,5 +329,9 @@ public class DurabilityHud extends CustomUIHud {
 
     public boolean isVisible() {
         return visible;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
