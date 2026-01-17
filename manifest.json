@@ -1,0 +1,19 @@
+{
+    "Group": "Sureizu",
+    "Name": "Blocchio",
+    "Version": "0.1.1",
+    "Description": "Blocchio: displays the block and entity under your crosshair (name, #id, category/origin, status) with a clean tooltip look.",
+    "Authors": [
+        {
+            "Name": "muteki_met"
+        }
+    ],
+    "Website": "https://discord.gg/8p5yQMCt9S",
+    "ServerVersion": "*",
+    "Dependencies": {
+        
+    },
+    "DisabledByDefault": false,
+    "Main": "org.sureizu.plugin.Blocchio",
+    "IncludesAssetPack": true
+}

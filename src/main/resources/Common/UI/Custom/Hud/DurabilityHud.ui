@@ -1,0 +1,126 @@
+// Durability HUD - Shows armor pieces with durability bars
+// Position: defaults to left side, can be configured to right
+@ProgressBarGreen = PatchStyle(Color: #00FF00);
+@ProgressBarYellow = PatchStyle(Color: #FFFF00);
+@ProgressBarRed = PatchStyle(Color: #FF0000);
+@ProgressBarBackground = PatchStyle(Color: #333333);
+
+@LabelStyle = (
+    Alignment: Center,
+    TextColor: #00FF00(0.8),
+    FontSize: 12
+);
+
+Group #DurabilityWrapper {
+    Anchor: (Left: 10, Width: 120);
+    LayoutMode: Middle;
+
+    Group #DurabilityPanel {
+        LayoutMode: Top;
+        Visible: true;
+
+        // Helmet slot
+        Group #HeadSlotGroup {
+            Anchor: (Height: 70);
+            LayoutMode: Center;
+            Visible: false;
+
+            ItemIcon #HeadItemIcon {
+                Anchor: (Width: 48, Height: 48);
+            }
+
+            Group #HeadDurabilityInfo {
+                Anchor: (Width: 30);
+                LayoutMode: Center;
+
+                Label #HeadDurabilityText {
+                    Style: @LabelStyle;
+                }
+
+                ProgressBar #HeadDurabilityBar {
+                    Value: 1.0;
+                    Background: @ProgressBarBackground;
+                    Bar: @ProgressBarGreen;
+                }
+            }
+        }
+
+        // Chestplate slot
+        Group #ChestSlotGroup {
+            Anchor: (Height: 70);
+            LayoutMode: Center;
+            Visible: false;
+
+            ItemIcon #ChestItemIcon {
+                Anchor: (Width: 48, Height: 48);
+            }
+
+            Group #ChestDurabilityInfo {
+                Anchor: (Width: 30);
+                LayoutMode: Center;
+
+                Label #ChestDurabilityText {
+                    Style: @LabelStyle;
+                }
+
+                ProgressBar #ChestDurabilityBar {
+                    Value: 1.0;
+                    Background: @ProgressBarBackground;
+                    Bar: @ProgressBarGreen;
+                }
+            }
+        }
+
+        // Gauntlets slot
+        Group #HandsSlotGroup {
+            Anchor: (Height: 70);
+            LayoutMode: Center;
+            Visible: false;
+
+            ItemIcon #HandsItemIcon {
+                Anchor: (Width: 48, Height: 48);
+            }
+
+            Group #HandsDurabilityInfo {
+                Anchor: (Width: 30);
+                LayoutMode: Center;
+
+                Label #HandsDurabilityText {
+                    Style: @LabelStyle;
+                }
+
+                ProgressBar #HandsDurabilityBar {
+                    Value: 1.0;
+                    Background: @ProgressBarBackground;
+                    Bar: @ProgressBarGreen;
+                }
+            }
+        }
+
+        // Leggings slot
+        Group #LegsSlotGroup {
+            Anchor: (Height: 70);
+            LayoutMode: Center;
+            Visible: false;
+
+            ItemIcon #LegsItemIcon {
+                Anchor: (Width: 48, Height: 48);
+            }
+
+            Group #LegsDurabilityInfo {
+                Anchor: (Width: 30);
+                LayoutMode: Center;
+
+                Label #LegsDurabilityText {
+                    Style: @LabelStyle;
+                }
+
+                ProgressBar #LegsDurabilityBar {
+                    Value: 1.0;
+                    Background: @ProgressBarBackground;
+                    Bar: @ProgressBarGreen;
+                }
+            }
+        }
+    }
+}

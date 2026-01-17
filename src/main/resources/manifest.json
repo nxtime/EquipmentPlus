@@ -1,0 +1,20 @@
+{
+    "Group": "dev.nxtime",
+    "Name": "EquipmentPlus",
+    "Version": "0.1.2-alpha",
+    "Description": "Armor durability HUD and auto-repair when items break.",
+    "Authors": [
+        {
+            "Name": "nxtime",
+            "Email": "",
+            "Url": ""
+        }
+    ],
+    "Website": "",
+    "ServerVersion": "*",
+    "Dependencies": {},
+    "OptionalDependencies": {},
+    "DisabledByDefault": false,
+    "Main": "dev.nxtime.equipmentplus.EquipmentPlusPlugin",
+    "IncludesAssetPack": true
+}
