@@ -315,6 +315,14 @@ public class DurabilityHud extends CustomUIHud {
 
     public void hide() {
         visible = false;
+        // Send update to hide all elements instead of unregistering
+        try {
+            UICommandBuilder builder = new UICommandBuilder();
+            builder.set("#EquipmentPlusWrapper.Visible", false);
+            super.update(false, builder);
+        } catch (Exception e) {
+            plugin.getPluginLogger().debug("Failed to hide HUD elements: " + e.getMessage());
+        }
     }
 
     /**

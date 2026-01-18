@@ -237,28 +237,15 @@ public class DurabilityHudManager {
 
     /**
      * Unregisters HUD from the native Hytale HUD system.
+     * Note: We don't actually unregister as calling resetHud/setCustomHud(null)
+     * crashes the client.
+     * Instead, hide() sets the wrapper visibility to false.
      */
     private void unregisterNativeHud(Player player) {
-        try {
-            if (player == null) {
-                plugin.getPluginLogger().debug("Cannot unregister native HUD: player is null");
-                return;
-            }
-
-            HudManager hudManager = player.getHudManager();
-            if (hudManager == null) {
-                plugin.getPluginLogger().debug("Cannot unregister native HUD: hudManager is null");
-                return;
-            }
-
-            // Only unregister if there's actually a custom HUD set
-            CustomUIHud currentHud = hudManager.getCustomHud();
-            if (currentHud != null) {
-                hudManager.setCustomHud(player.getPlayerRef(), null);
-                plugin.getPluginLogger().debug("Successfully unregistered native HUD for player: " + player.getUuid());
-            }
-        } catch (Exception e) {
-            plugin.getPluginLogger().warn("Failed to unregister native HUD: " + e.getMessage());
+        // Don't actually unregister - hide() already makes the HUD invisible
+        // Calling resetHud or setCustomHud(null) causes client crashes
+        if (player != null) {
+            plugin.getPluginLogger().debug("Native HUD hidden for player: " + player.getUuid());
         }
     }
 
