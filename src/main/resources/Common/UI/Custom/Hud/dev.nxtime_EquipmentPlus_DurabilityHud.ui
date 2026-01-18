@@ -30,7 +30,7 @@ Group #EquipmentPlusWrapper {
             }
 
             Group #HeadDurabilityInfo {
-                Anchor: (Width: 30);
+                Anchor: (Width: 50);
                 LayoutMode: Center;
 
                 Label #HeadDurabilityText {
@@ -56,7 +56,7 @@ Group #EquipmentPlusWrapper {
             }
 
             Group #ChestDurabilityInfo {
-                Anchor: (Width: 30);
+                Anchor: (Width: 50);
                 LayoutMode: Center;
 
                 Label #ChestDurabilityText {
@@ -82,7 +82,7 @@ Group #EquipmentPlusWrapper {
             }
 
             Group #HandsDurabilityInfo {
-                Anchor: (Width: 30);
+                Anchor: (Width: 50);
                 LayoutMode: Center;
 
                 Label #HandsDurabilityText {
@@ -108,7 +108,7 @@ Group #EquipmentPlusWrapper {
             }
 
             Group #LegsDurabilityInfo {
-                Anchor: (Width: 30);
+                Anchor: (Width: 50);
                 LayoutMode: Center;
 
                 Label #LegsDurabilityText {
@@ -134,7 +134,7 @@ Group #EquipmentPlusWrapper {
             }
 
             Group #AmmoRemainingInfo {
-                Anchor: (Width: 30);
+                Anchor: (Width: 50);
                 LayoutMode: Center;
 
                 Label #AmmoRemainigText {

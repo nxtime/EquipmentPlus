@@ -127,6 +127,8 @@ public class DurabilityHud extends CustomUIHud {
             PatchStyle headBarStyle = new PatchStyle();
             headBarStyle.setColor(Value.of(headBarColor));
             builder.setObject("#HeadDurabilityBar.Bar", headBarStyle);
+            // Set text color to match durability
+            builder.set("#HeadDurabilityText.Style.TextColor", headBarColor);
         }
 
         // Chest slot
@@ -138,6 +140,8 @@ public class DurabilityHud extends CustomUIHud {
             PatchStyle chestBarStyle = new PatchStyle();
             chestBarStyle.setColor(Value.of(chestBarColor));
             builder.setObject("#ChestDurabilityBar.Bar", chestBarStyle);
+            // Set text color to match durability
+            builder.set("#ChestDurabilityText.Style.TextColor", chestBarColor);
         }
 
         // Hands slot
@@ -149,6 +153,8 @@ public class DurabilityHud extends CustomUIHud {
             PatchStyle handsBarStyle = new PatchStyle();
             handsBarStyle.setColor(Value.of(handsBarColor));
             builder.setObject("#HandsDurabilityBar.Bar", handsBarStyle);
+            // Set text color to match durability
+            builder.set("#HandsDurabilityText.Style.TextColor", handsBarColor);
         }
 
         // Legs slot
@@ -160,6 +166,8 @@ public class DurabilityHud extends CustomUIHud {
             PatchStyle legsBarStyle = new PatchStyle();
             legsBarStyle.setColor(Value.of(legsBarColor));
             builder.setObject("#LegsDurabilityBar.Bar", legsBarStyle);
+            // Set text color to match durability
+            builder.set("#LegsDurabilityText.Style.TextColor", legsBarColor);
         }
 
         // Ammo slot
