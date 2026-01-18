@@ -33,11 +33,14 @@ $Container = "../Container.ui";
 $C.@PageOverlay {
   $C.@Container {
     Anchor: (Width: 480, Height: 320);
+    Background: #0e141b;
 
     #Title {
       Group {
         $C.@Title {
           @Text = "EquipmentPlus Settings";
+          Anchor: (Height: 40);
+          Style: (FontSize: 24, TextColor: #ffffff, RenderUppercase: true, RenderBold: true, Alignment: Center);
         }
       }
     }

@@ -37,7 +37,7 @@ public class EquipmentPlusPlugin extends JavaPlugin {
         logger = new PluginLogger(getLogger());
         config = new EquipmentPlusConfig(this);
 
-        logger.info("EquipmentPlus v0.1.0-alpha initializing...");
+        logger.info("EquipmentPlus v0.1.3-alpha initializing...");
 
         // Load configuration
         config.load();

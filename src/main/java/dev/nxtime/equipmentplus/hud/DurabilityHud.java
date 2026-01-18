@@ -9,7 +9,6 @@ import com.hypixel.hytale.server.core.ui.PatchStyle;
 import com.hypixel.hytale.server.core.ui.Value;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import dev.nxtime.equipmentplus.EquipmentPlusPlugin;
-import dev.nxtime.equipmentplus.util.UiUtils;
 
 import javax.annotation.Nonnull;
 
@@ -19,8 +18,7 @@ import javax.annotation.Nonnull;
  */
 public class DurabilityHud extends CustomUIHud {
 
-    private static final String UI_PATH = "Hud/DurabilityHud.ui";
-    private static final String UI_CONTENT = UiUtils.loadUiFile(DurabilityHud.class, UI_PATH);
+    private static final String UI_PATH = "Hud/dev.nxtime_EquipmentPlus_DurabilityHud.ui";
 
     // Armor slot indices
     private static final int SLOT_HEAD = 0;
@@ -312,6 +310,7 @@ public class DurabilityHud extends CustomUIHud {
 
     public void show() {
         visible = true;
+        super.show();
     }
 
     public void hide() {

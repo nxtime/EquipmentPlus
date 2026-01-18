@@ -1,13 +1,10 @@
 package dev.nxtime.equipmentplus.hud;
 
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.ItemStack;
-import com.hypixel.hytale.server.core.inventory.container.ItemContainer;
 import com.hypixel.hytale.server.core.entity.entities.player.hud.CustomUIHud;
 import com.hypixel.hytale.server.core.entity.entities.player.hud.HudManager;
 import com.hypixel.hytale.server.core.plugin.PluginManager;
 import com.hypixel.hytale.server.core.ui.Anchor;
-import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import dev.nxtime.equipmentplus.EquipmentPlusPlugin;
 
@@ -22,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Integrates with MultipleHUD if available, otherwise uses native HUD system.
  */
 public class DurabilityHudManager {
-    private static final String HUD_FILE = "Hud/DurabilityHud.ui";
+    private static final String HUD_FILE = "Hud/dev.nxtime_EquipmentPlus_DurabilityHud.ui";
 
     private final EquipmentPlusPlugin plugin;
     private final Map<UUID, DurabilityHud> playerHuds = new ConcurrentHashMap<>();
@@ -81,14 +78,14 @@ public class DurabilityHudManager {
             DurabilityHud hud = new DurabilityHud(plugin, player);
             playerHuds.put(uuid, hud);
 
-            // Mark the HUD as visible so updates will be processed
-            hud.show();
-
             if (multipleHudAvailable) {
                 registerWithMultipleHud(player, hud);
             } else {
                 registerNativeHud(player, hud);
             }
+
+            // Mark the HUD as visible and trigger build() AFTER registration
+            hud.show();
 
             // Initial data will be set in build() method using default field values
             // Don't call update() here - let it happen naturally on the next tick
@@ -243,8 +240,21 @@ public class DurabilityHudManager {
      */
     private void unregisterNativeHud(Player player) {
         try {
-            if (player != null && player.getHudManager() != null) {
-                player.getHudManager().setCustomHud(player.getPlayerRef(), null);
+            if (player == null) {
+                plugin.getPluginLogger().debug("Cannot unregister native HUD: player is null");
+                return;
+            }
+
+            HudManager hudManager = player.getHudManager();
+            if (hudManager == null) {
+                plugin.getPluginLogger().debug("Cannot unregister native HUD: hudManager is null");
+                return;
+            }
+
+            // Only unregister if there's actually a custom HUD set
+            CustomUIHud currentHud = hudManager.getCustomHud();
+            if (currentHud != null) {
+                hudManager.setCustomHud(player.getPlayerRef(), null);
                 plugin.getPluginLogger().debug("Successfully unregistered native HUD for player: " + player.getUuid());
             }
         } catch (Exception e) {
@@ -258,7 +268,11 @@ public class DurabilityHudManager {
     private void registerNativeHud(Player player, DurabilityHud hud) {
         try {
             HudManager hudManager = player.getHudManager();
-            hudManager.setCustomHud(player.getPlayerRef(), hud.getCustomHud());
+
+            if (hudManager != null) {
+                hudManager.setCustomHud(player.getPlayerRef(), hud.getCustomHud());
+                plugin.getPluginLogger().debug("Successfully registered native HUD for player: " + player.getUuid());
+            }
         } catch (Exception e) {
             plugin.getPluginLogger().warn("Failed to register native HUD: " + e.getMessage());
         }
