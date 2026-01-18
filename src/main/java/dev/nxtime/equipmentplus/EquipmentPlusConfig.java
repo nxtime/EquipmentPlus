@@ -23,7 +23,7 @@ public class EquipmentPlusConfig {
     private boolean hudEnabled = true;
     private String hudPosition = "left"; // "left" or "right"
     private boolean autoRepairEnabled = true;
-    private int hudUpdateTicks = 20; // Update every second
+    private int hudUpdateTicks = 200; // Backup update every 10 seconds (events handle most updates)
 
     public EquipmentPlusConfig(JavaPlugin plugin) {
         this.plugin = plugin;

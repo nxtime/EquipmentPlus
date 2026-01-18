@@ -138,6 +138,13 @@ public class DurabilityHudManager {
     }
 
     /**
+     * Checks if a player has an active HUD.
+     */
+    public boolean hasHud(UUID uuid) {
+        return playerHuds.containsKey(uuid);
+    }
+
+    /**
      * Cleanup all HUDs.
      */
     public void cleanup() {
